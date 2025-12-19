@@ -4,6 +4,7 @@ Templates 앱 테스트
 
 import pytest
 from rest_framework import status
+
 from apps.templates.models import Template
 
 

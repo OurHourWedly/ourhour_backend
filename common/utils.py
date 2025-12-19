@@ -2,8 +2,8 @@
 유틸리티 함수
 """
 
-from typing import Any, Dict
 from datetime import datetime
+from typing import Any, Dict
 
 
 def format_datetime(dt: datetime, format_str: str = "%Y-%m-%d %H:%M:%S") -> str:

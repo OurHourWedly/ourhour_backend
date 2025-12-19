@@ -3,10 +3,11 @@ Payment 모델 (확장용)
 API는 Phase 3에서 구현 예정
 """
 
-from django.db import models
 from django.conf import settings
-from apps.shared.models import BaseModel
+from django.db import models
+
 from apps.invitations.models import Invitation
+from apps.shared.models import BaseModel
 
 
 class Payment(BaseModel):

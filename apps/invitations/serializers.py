@@ -3,7 +3,8 @@ Invitations 앱 시리얼라이저
 """
 
 from rest_framework import serializers
-from apps.invitations.models import Invitation, RSVP, Guestbook
+
+from apps.invitations.models import RSVP, Guestbook, Invitation
 from apps.templates.serializers import TemplateListSerializer
 
 

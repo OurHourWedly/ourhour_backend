@@ -2,8 +2,9 @@
 Users 앱 시리얼라이저
 """
 
-from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+from rest_framework import serializers
+
 from apps.users.models import User
 
 

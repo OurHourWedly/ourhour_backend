@@ -2,8 +2,9 @@
 Invitation 모델
 """
 
-from django.db import models
 from django.conf import settings
+from django.db import models
+
 from apps.shared.models import BaseModel
 from apps.templates.models import Template
 

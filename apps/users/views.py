@@ -7,8 +7,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+
 from apps.users.models import User
-from apps.users.serializers import SignupSerializer, LoginSerializer, UserSerializer
+from apps.users.serializers import LoginSerializer, SignupSerializer, UserSerializer
 from apps.users.services.user_service import UserService
 
 

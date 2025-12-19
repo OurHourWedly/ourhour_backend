@@ -2,9 +2,15 @@
 Invitations 앱 URL 설정
 """
 
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from apps.invitations.views import InvitationViewSet, PublicInvitationView, PublicRSVPView, PublicGuestbookView
+
+from apps.invitations.views import (
+    InvitationViewSet,
+    PublicGuestbookView,
+    PublicInvitationView,
+    PublicRSVPView,
+)
 
 router = DefaultRouter()
 router.register(r"", InvitationViewSet, basename="invitation")
