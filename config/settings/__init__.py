@@ -8,18 +8,18 @@ Django Settings 모듈
 - test: test.py
 - local (기본값): local.py
 """
+
 import os
 
-ENVIRONMENT = os.getenv('DJANGO_ENV', 'local').lower()
+ENVIRONMENT = os.getenv("DJANGO_ENV", "local").lower()
 
-if ENVIRONMENT == 'production':
+if ENVIRONMENT == "production":
     from config.settings.prod import *
-elif ENVIRONMENT == 'staging':
+elif ENVIRONMENT == "staging":
     from config.settings.staging import *
-elif ENVIRONMENT == 'dev':
+elif ENVIRONMENT == "dev":
     from config.settings.dev import *
-elif ENVIRONMENT == 'test':
+elif ENVIRONMENT == "test":
     from config.settings.test import *
 else:
     from config.settings.local import *
-

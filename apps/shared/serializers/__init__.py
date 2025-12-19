@@ -1,4 +1,3 @@
 from .base import BaseSerializer
 
-__all__ = ['BaseSerializer']
-
+__all__ = ["BaseSerializer"]
