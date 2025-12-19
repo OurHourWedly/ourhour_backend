@@ -11,8 +11,17 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# 환경 변수 로드
-env_path = BASE_DIR / "envs" / ".env.local"
+# 환경 변수 로드 - DJANGO_ENV에 따라 적절한 .env 파일 로드
+ENVIRONMENT = os.getenv('DJANGO_ENV', 'local').lower()
+env_file_map = {
+    'local': '.env.local',
+    'test': '.env.test',
+    'dev': '.env.dev',
+    'staging': '.env.staging',
+    'production': '.env.prod',
+}
+env_file_name = env_file_map.get(ENVIRONMENT, '.env.local')
+env_path = BASE_DIR / "envs" / env_file_name
 if env_path.exists():
     load_dotenv(env_path)
 

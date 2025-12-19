@@ -10,11 +10,17 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     
+    env:
+      DJANGO_ENV: test
+      SECRET_KEY: test-secret-key-for-ci-only-do-not-use-in-production
+      DEBUG: 'True'
+    
     steps:
       - name: Check out the codes
         uses: actions/checkout@v4
 
       - name: Setup python environment
+        id: setup-python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -42,7 +48,7 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          poetry install --no-interaction --no-root
+          poetry install --no-interaction
 
       - name: Run black
         run: |
@@ -68,5 +74,6 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          file: ./coverage.xml
-          fail_ci_if_error: false
+          files: ./coverage.xml
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

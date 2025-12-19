@@ -3,7 +3,7 @@
 """
 from config.settings.base import *
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 # 테스트용 데이터베이스
 DATABASES = {

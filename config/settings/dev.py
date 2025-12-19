@@ -3,7 +3,7 @@
 """
 from config.settings.base import *
 
-DEBUG = False  # 또는 True (팀 정책에 따라)
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_HOSTS') else ['*']
 
