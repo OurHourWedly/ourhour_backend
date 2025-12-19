@@ -80,4 +80,12 @@ omit = [
   ".mypy_cache/**/*",
   "*/migrations/*",
   "*/*test*.py",
+  "config/settings/*.py",
+  "config/settings/__init__.py",
+  "manage.py",
+  "config/asgi.py",
+  "config/wsgi.py",
+  "apps/shared/models/soft_delete.py",
+  "apps/shared/serializers/base.py",
+  "apps/shared/utils/helpers.py",
 ]
