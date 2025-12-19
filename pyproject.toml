@@ -80,4 +80,8 @@ omit = [
   ".mypy_cache/**/*",
   "*/migrations/*",
   "*/*test*.py",
+  "*/config/settings/*",
+  "manage.py",
+  "*/config/asgi.py",
+  "*/config/wsgi.py",
 ]
