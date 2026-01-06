@@ -9,7 +9,12 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.models import User
-from apps.users.serializers import LoginSerializer, SignupSerializer, UserSerializer
+from apps.users.serializers import (
+    LoginSerializer,
+    PasswordChangeSerializer,
+    SignupSerializer,
+    UserSerializer,
+)
 from apps.users.services.user_service import UserService
 
 
@@ -64,13 +69,38 @@ def login_view(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET"])
+@api_view(["GET", "DELETE"])
 @permission_classes([IsAuthenticated])
 def me_view(request):
     """
-    현재 사용자 정보 조회
+    현재 사용자 정보 조회 / 계정 탈퇴
 
-    GET /auth/me
+    GET /auth/me/ - 현재 사용자 정보 조회
+    DELETE /auth/me/ - 계정 탈퇴
     """
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    if request.method == "GET":
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == "DELETE":
+        user = request.user
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def change_password_view(request):
+    """
+    비밀번호 변경
+
+    PATCH /auth/password/
+    """
+    serializer = PasswordChangeSerializer(data=request.data, context={"request": request})
+    if serializer.is_valid():
+        user = request.user
+        user.set_password(serializer.validated_data["new_password"])
+        user.save()
+        return Response({"message": "비밀번호가 성공적으로 변경되었습니다."}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
