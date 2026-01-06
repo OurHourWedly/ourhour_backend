@@ -12,7 +12,8 @@ class TemplateListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Template
-        fields = ["id", "name", "thumbnail_url", "category", "is_premium", "usage_count"]
+        fields = ["id", "name", "thumbnail_url", "category", "is_premium", "usage_count", "sample_slug"]
+        read_only_fields = ["sample_slug"]
 
 
 class TemplateSerializer(serializers.ModelSerializer):
@@ -21,4 +22,4 @@ class TemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Template
         fields = "__all__"
-        read_only_fields = ["usage_count", "created_at", "updated_at"]
+        read_only_fields = ["usage_count", "sample_slug", "created_at", "updated_at"]

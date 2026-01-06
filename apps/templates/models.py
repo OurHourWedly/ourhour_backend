@@ -30,6 +30,9 @@ class Template(BaseModel):
     is_premium = models.BooleanField(default=False, verbose_name="프리미엄 여부")
     is_active = models.BooleanField(default=True, verbose_name="사용 가능 여부")
     usage_count = models.IntegerField(default=0, verbose_name="사용 횟수")
+    sample_slug = models.CharField(
+        max_length=100, unique=True, blank=True, null=True, verbose_name="샘플 슬러그"
+    )
 
     class Meta:
         verbose_name = "템플릿"
