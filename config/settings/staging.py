@@ -2,7 +2,7 @@
 스테이징 환경 설정
 """
 
-from typing import Mapping, Any
+from typing import Any, Mapping
 
 from config.settings.base import *
 
