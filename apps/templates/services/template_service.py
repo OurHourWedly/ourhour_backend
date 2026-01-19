@@ -124,4 +124,3 @@ class TemplateService:
         template.save(update_fields=["sample_slug"])
 
         return sample_invitation
-

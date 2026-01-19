@@ -70,4 +70,3 @@ class Command(BaseCommand):
             self.style.SUCCESS(f"완료: 생성 {created_count}개, 업데이트 {updated_count}개, 스킵 {skipped_count}개")
         )
         self.stdout.write("=" * 50)
-
