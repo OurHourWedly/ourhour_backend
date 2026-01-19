@@ -45,13 +45,9 @@ class TemplateViewSet(viewsets.ReadOnlyModelViewSet):
         template = self.get_object()
 
         if not template.sample_slug:
-            return Response(
-                {"error": "이 템플릿에는 샘플이 없습니다."}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "이 템플릿에는 샘플이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
 
-        sample_invitation = get_object_or_404(
-            Invitation, url_slug=template.sample_slug, status="PUBLISHED"
-        )
+        sample_invitation = get_object_or_404(Invitation, url_slug=template.sample_slug, status="PUBLISHED")
 
         serializer = PublicInvitationSerializer(sample_invitation)
         return Response(serializer.data, status=status.HTTP_200_OK)

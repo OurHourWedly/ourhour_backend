@@ -2,6 +2,8 @@
 스테이징 환경 설정
 """
 
+from typing import Mapping, Any
+
 from config.settings.base import *
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
@@ -32,7 +34,7 @@ X_FRAME_OPTIONS = "DENY"
 CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if os.getenv("CORS_ALLOWED_ORIGINS") else []
 
 # 로깅 설정 (프로덕션과 유사)
-LOGGING = {
+LOGGING: Mapping[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {

@@ -5,6 +5,7 @@ Templates 앱 서비스 레이어
 
 import uuid
 from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
@@ -123,5 +124,4 @@ class TemplateService:
         template.save(update_fields=["sample_slug"])
 
         return sample_invitation
-
 

@@ -35,7 +35,9 @@ class Command(BaseCommand):
         for template in templates:
             if template.sample_slug and not update_existing:
                 self.stdout.write(
-                    self.style.WARNING(f"템플릿 '{template.name}' (ID: {template.id})는 이미 샘플이 있습니다. 스킵합니다.")
+                    self.style.WARNING(
+                        f"템플릿 '{template.name}' (ID: {template.id})는 이미 샘플이 있습니다. 스킵합니다."
+                    )
                 )
                 skipped_count += 1
                 continue
@@ -64,7 +66,8 @@ class Command(BaseCommand):
                 )
 
         self.stdout.write("\n" + "=" * 50)
-        self.stdout.write(self.style.SUCCESS(f"완료: 생성 {created_count}개, 업데이트 {updated_count}개, 스킵 {skipped_count}개"))
+        self.stdout.write(
+            self.style.SUCCESS(f"완료: 생성 {created_count}개, 업데이트 {updated_count}개, 스킵 {skipped_count}개")
+        )
         self.stdout.write("=" * 50)
-
 
