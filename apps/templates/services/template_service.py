@@ -124,3 +124,149 @@ class TemplateService:
         template.save(update_fields=["sample_slug"])
 
         return sample_invitation
+
+
+class UserTemplateService:
+    """UserTemplate 관련 비즈니스 로직 처리"""
+
+    @staticmethod
+    def apply_template_to_invitation(user_template, invitation):
+        """
+        사용자 템플릿을 Invitation에 적용
+
+        Args:
+            user_template: UserTemplate 객체
+            invitation: Invitation 객체
+
+        Returns:
+            Invitation: 업데이트된 Invitation 객체
+        """
+        template_data = user_template.template_data
+
+        # 템플릿 데이터의 필드들을 Invitation에 적용
+        # JSONField에 저장된 데이터를 Invitation 필드에 매핑
+        update_fields = []
+        for field_name, field_value in template_data.items():
+            if hasattr(invitation, field_name):
+                setattr(invitation, field_name, field_value)
+                update_fields.append(field_name)
+
+        # 교통수단 데이터가 있으면 처리
+        if "transportations" in template_data:
+            from apps.invitations.models import Transportation
+
+            # 기존 교통수단 삭제
+            Transportation.objects.filter(invitation=invitation).delete()
+
+            # 새 교통수단 생성
+            for idx, transport_data in enumerate(template_data["transportations"]):
+                Transportation.objects.create(
+                    invitation=invitation,
+                    transport_type=transport_data.get("transport_type"),
+                    content=transport_data.get("content", ""),
+                    order=transport_data.get("order", idx),
+                )
+
+        if update_fields:
+            invitation.save(update_fields=update_fields)
+
+        return invitation
+
+    @staticmethod
+    def create_template_from_invitation(invitation, name, is_default=False):
+        """
+        Invitation에서 사용자 템플릿 생성
+
+        Args:
+            invitation: Invitation 객체
+            name: 템플릿 이름
+            is_default: 기본 템플릿 여부
+
+        Returns:
+            UserTemplate: 생성된 UserTemplate 객체
+        """
+        from apps.invitations.models import Transportation
+        from apps.templates.models import UserTemplate
+
+        # Invitation의 모든 필드를 템플릿 데이터로 변환
+        template_data = {}
+        invitation_fields = [
+            "title",
+            "groom_name",
+            "groom_father_name",
+            "groom_mother_name",
+            "groom_phone",
+            "bride_name",
+            "bride_father_name",
+            "bride_mother_name",
+            "bride_phone",
+            "wedding_date",
+            "wedding_location_name",
+            "wedding_location_address",
+            "wedding_location_lat",
+            "wedding_location_lng",
+            "invitation_message",
+            "greeting_title",
+            "greeting_subtitle",
+            "greeting_message",
+            "greeting_name_display_type",
+            "greeting_name_manual",
+            "ending_message",
+            "photo_urls",
+            "photo_frame_type",
+            "photo_effect",
+            "show_calendar",
+            "show_dday",
+            "show_countdown",
+            "show_map",
+            "lock_map",
+            "show_navigation",
+            "background_animation",
+            "background_color",
+            "background_texture",
+            "background_effect",
+            "font_family",
+            "font_color",
+            "font_weight",
+            "music_url",
+            "prevent_zoom",
+            "scroll_animation",
+            "enable_rsvp",
+            "enable_guestbook",
+            "enable_account_transfer",
+            "is_public",
+        ]
+
+        for field_name in invitation_fields:
+            if hasattr(invitation, field_name):
+                value = getattr(invitation, field_name)
+                # DateTimeField는 ISO 형식으로 변환
+                if hasattr(value, "isoformat"):
+                    template_data[field_name] = value.isoformat()
+                else:
+                    template_data[field_name] = value
+
+        # 교통수단 데이터 추가
+        transportations = Transportation.objects.filter(invitation=invitation).order_by("order")
+        template_data["transportations"] = [
+            {
+                "transport_type": t.transport_type,
+                "content": t.content,
+                "order": t.order,
+            }
+            for t in transportations
+        ]
+
+        # 기본 템플릿이 하나만 있도록 처리
+        if is_default:
+            UserTemplate.objects.filter(user=invitation.user, is_default=True).update(is_default=False)
+
+        # UserTemplate 생성
+        user_template = UserTemplate.objects.create(
+            user=invitation.user,
+            name=name,
+            template_data=template_data,
+            is_default=is_default,
+        )
+
+        return user_template

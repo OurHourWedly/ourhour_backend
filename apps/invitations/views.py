@@ -10,7 +10,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.invitations.models import RSVP, Guestbook, Invitation
+from apps.invitations.models import RSVP, Guestbook, Invitation, Transportation
 from apps.invitations.serializers import (
     GuestbookSerializer,
     InvitationCreateSerializer,
@@ -19,6 +19,7 @@ from apps.invitations.serializers import (
     PublicInvitationSerializer,
     RSVPSerializer,
     RSVPStatisticsSerializer,
+    TransportationSerializer,
 )
 from apps.invitations.services.guestbook_service import GuestbookService
 from apps.invitations.services.invitation_service import InvitationService
@@ -184,6 +185,46 @@ class InvitationViewSet(viewsets.ModelViewSet):
         guestbook = get_object_or_404(Guestbook, pk=guestbook_id, invitation=invitation)
 
         guestbook.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["get", "post"], url_path="transportations", permission_classes=[IsAuthenticated])
+    def transportations(self, request, pk=None):
+        """
+        교통수단 조회/생성
+
+        GET /invitations/{id}/transportations/ - 교통수단 목록 조회 (소유자만)
+        POST /invitations/{id}/transportations/ - 교통수단 생성 (소유자만)
+        """
+        invitation = self.get_object()
+
+        if request.method == "GET":
+            transportations = Transportation.objects.filter(invitation=invitation)
+            serializer = TransportationSerializer(transportations, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        else:  # POST
+            serializer = TransportationSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(invitation=invitation)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=True,
+        methods=["delete"],
+        url_path="transportations/(?P<transportation_id>[^/.]+)",
+        permission_classes=[IsAuthenticated],
+    )
+    def delete_transportation(self, request, pk=None, transportation_id=None):
+        """
+        교통수단 삭제
+
+        DELETE /invitations/{id}/transportations/{transportation_id}/ - 교통수단 삭제 (소유자만)
+        """
+        invitation = self.get_object()
+        transportation = get_object_or_404(Transportation, pk=transportation_id, invitation=invitation)
+
+        transportation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
