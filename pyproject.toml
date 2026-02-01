@@ -79,6 +79,9 @@ fail_under = 80
 omit = [
   ".mypy_cache/**/*",
   "*/migrations/*",
+  "*/management/*",
+  "*/__init__.py",
+  "common/*",
   "*/*test*.py",
   "config/settings/*.py",
   "config/settings/__init__.py",

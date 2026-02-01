@@ -2,6 +2,7 @@
 Template 모델
 """
 
+from django.conf import settings
 from django.db import models
 
 from apps.shared.models import BaseModel
@@ -30,6 +31,7 @@ class Template(BaseModel):
     is_premium = models.BooleanField(default=False, verbose_name="프리미엄 여부")
     is_active = models.BooleanField(default=True, verbose_name="사용 가능 여부")
     usage_count = models.IntegerField(default=0, verbose_name="사용 횟수")
+    sample_slug = models.CharField(max_length=100, unique=True, blank=True, null=True, verbose_name="샘플 슬러그")
 
     class Meta:
         verbose_name = "템플릿"
@@ -39,3 +41,29 @@ class Template(BaseModel):
 
     def __str__(self):
         return self.name
+
+
+class UserTemplate(BaseModel):
+    """
+    사용자 템플릿 모델
+    사용자가 자신만의 템플릿을 만들어 재사용할 수 있도록 함
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_templates", verbose_name="소유자"
+    )
+    name = models.CharField(max_length=100, verbose_name="템플릿 이름")
+    template_data = models.JSONField(default=dict, verbose_name="템플릿 데이터")
+    is_default = models.BooleanField(default=False, verbose_name="기본 템플릿 여부")
+
+    class Meta:
+        verbose_name = "사용자 템플릿"
+        verbose_name_plural = "사용자 템플릿"
+        db_table = "templates_user_template"
+        ordering = ["-is_default", "-created_at"]
+        indexes = [
+            models.Index(fields=["user", "is_default"]),
+        ]
+
+    def __str__(self):
+        return f"{self.name} ({self.user.email})"

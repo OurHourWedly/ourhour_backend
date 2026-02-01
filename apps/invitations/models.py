@@ -59,14 +59,78 @@ class Invitation(BaseModel):
 
     # 메시지
     invitation_message = models.TextField(blank=True, verbose_name="본문 메시지")
-    greeting_message = models.TextField(blank=True, verbose_name="인사말")
+    greeting_title = models.CharField(max_length=200, blank=True, verbose_name="인사말 제목")
+    greeting_subtitle = models.CharField(max_length=200, blank=True, verbose_name="인사말 소제목")
+    greeting_message = models.TextField(blank=True, verbose_name="인사말 내용")
+    greeting_name_display_type = models.CharField(
+        max_length=20,
+        default="AUTO",
+        choices=[
+            ("AUTO", "신랑·신부 이름 표시"),
+            ("MANUAL", "성함 직접 입력"),
+        ],
+        verbose_name="성함 표기 방식",
+    )
+    greeting_name_manual = models.TextField(blank=True, verbose_name="직접 입력한 성함")
     ending_message = models.TextField(blank=True, verbose_name="엔딩 문구")
+
+    # 사진 관련
+    photo_urls = models.JSONField(default=list, blank=True, verbose_name="사진 URL 목록")
+    photo_frame_type = models.CharField(
+        max_length=20,
+        default="BASIC",
+        choices=[
+            ("BASIC", "기본"),
+            ("FILL", "채우기"),
+            ("OVAL", "타원"),
+            ("ARCH", "아치"),
+            ("FRAME", "액자"),
+        ],
+        verbose_name="사진 프레임 타입",
+    )
+    photo_effect = models.CharField(
+        max_length=20,
+        default="NONE",
+        choices=[
+            ("NONE", "없음"),
+            ("FOG", "안개"),
+            ("WAVE", "물결"),
+            ("OTHER", "기타"),
+        ],
+        blank=True,
+        verbose_name="사진 효과",
+    )
+
+    # 표시 옵션
+    show_calendar = models.BooleanField(default=True, verbose_name="캘린더 표시")
+    show_dday = models.BooleanField(default=False, verbose_name="D-DAY 표시")
+    show_countdown = models.BooleanField(default=False, verbose_name="카운트다운 표시")
+
+    # 지도 옵션
+    show_map = models.BooleanField(default=True, verbose_name="지도 표시")
+    lock_map = models.BooleanField(default=False, verbose_name="지도 잠금")
+    show_navigation = models.BooleanField(default=False, verbose_name="네비게이션 버튼 표시")
 
     # 옵션
     background_animation = models.CharField(max_length=50, blank=True, verbose_name="배경 애니메이션")
     background_color = models.CharField(max_length=20, default="#FFFFFF", verbose_name="배경 색")
+    background_texture = models.CharField(max_length=50, blank=True, verbose_name="배경 질감")
+    background_effect = models.CharField(max_length=50, blank=True, verbose_name="배경 효과")
     font_family = models.CharField(max_length=50, default="default", verbose_name="폰트")
+    font_color = models.CharField(max_length=20, default="#000000", verbose_name="글꼴 색상")
+    font_weight = models.CharField(
+        max_length=20,
+        default="NORMAL",
+        choices=[
+            ("NORMAL", "보통"),
+            ("BOLD", "굵게"),
+            ("LIGHT", "얇게"),
+        ],
+        verbose_name="글꼴 두께",
+    )
     music_url = models.URLField(max_length=500, blank=True, verbose_name="배경음악 URL")
+    prevent_zoom = models.BooleanField(default=True, verbose_name="청첩장 확대 방지")
+    scroll_animation = models.BooleanField(default=False, verbose_name="스크롤 시 등장 이벤트")
 
     # 기능 토글
     enable_rsvp = models.BooleanField(default=True, verbose_name="RSVP 기능 사용")
@@ -164,3 +228,37 @@ class Guestbook(BaseModel):
 
     def __str__(self):
         return f"{self.author_name} - {self.invitation.title}"
+
+
+class Transportation(BaseModel):
+    """
+    교통수단 모델
+    """
+
+    invitation = models.ForeignKey(
+        Invitation, on_delete=models.CASCADE, related_name="transportations", verbose_name="청첩장"
+    )
+    transport_type = models.CharField(
+        max_length=20,
+        choices=[
+            ("BUS", "버스"),
+            ("SUBWAY", "지하철"),
+            ("CAR", "자가용"),
+            ("WALK", "도보"),
+        ],
+        verbose_name="교통수단 종류",
+    )
+    content = models.TextField(blank=True, verbose_name="내용")
+    order = models.IntegerField(default=0, verbose_name="순서")
+
+    class Meta:
+        verbose_name = "교통수단"
+        verbose_name_plural = "교통수단"
+        db_table = "invitations_transportation"
+        ordering = ["order", "created_at"]
+        indexes = [
+            models.Index(fields=["invitation", "order"]),
+        ]
+
+    def __str__(self):
+        return f"{self.get_transport_type_display()} - {self.invitation.title}"

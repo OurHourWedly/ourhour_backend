@@ -4,7 +4,7 @@ Invitations 앱 시리얼라이저
 
 from rest_framework import serializers
 
-from apps.invitations.models import RSVP, Guestbook, Invitation
+from apps.invitations.models import RSVP, Guestbook, Invitation, Transportation
 from apps.templates.serializers import TemplateListSerializer
 
 
@@ -30,12 +30,31 @@ class InvitationCreateSerializer(serializers.ModelSerializer):
             "wedding_location_lat",
             "wedding_location_lng",
             "invitation_message",
+            "greeting_title",
+            "greeting_subtitle",
             "greeting_message",
+            "greeting_name_display_type",
+            "greeting_name_manual",
             "ending_message",
+            "photo_urls",
+            "photo_frame_type",
+            "photo_effect",
+            "show_calendar",
+            "show_dday",
+            "show_countdown",
+            "show_map",
+            "lock_map",
+            "show_navigation",
             "background_animation",
             "background_color",
+            "background_texture",
+            "background_effect",
             "font_family",
+            "font_color",
+            "font_weight",
             "music_url",
+            "prevent_zoom",
+            "scroll_animation",
             "enable_rsvp",
             "enable_guestbook",
             "enable_account_transfer",
@@ -78,12 +97,31 @@ class InvitationUpdateSerializer(serializers.ModelSerializer):
             "wedding_location_lat",
             "wedding_location_lng",
             "invitation_message",
+            "greeting_title",
+            "greeting_subtitle",
             "greeting_message",
+            "greeting_name_display_type",
+            "greeting_name_manual",
             "ending_message",
+            "photo_urls",
+            "photo_frame_type",
+            "photo_effect",
+            "show_calendar",
+            "show_dday",
+            "show_countdown",
+            "show_map",
+            "lock_map",
+            "show_navigation",
             "background_animation",
             "background_color",
+            "background_texture",
+            "background_effect",
             "font_family",
+            "font_color",
+            "font_weight",
             "music_url",
+            "prevent_zoom",
+            "scroll_animation",
             "enable_rsvp",
             "enable_guestbook",
             "enable_account_transfer",
@@ -94,10 +132,20 @@ class InvitationUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ["url_slug"]
 
 
+class TransportationSerializer(serializers.ModelSerializer):
+    """교통수단 시리얼라이저"""
+
+    class Meta:
+        model = Transportation
+        fields = ["id", "transport_type", "content", "order", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+
 class InvitationSerializer(serializers.ModelSerializer):
     """청첩장 상세용 시리얼라이저"""
 
     template = TemplateListSerializer(read_only=True)
+    transportations = TransportationSerializer(many=True, read_only=True)
 
     class Meta:
         model = Invitation
@@ -109,6 +157,7 @@ class PublicInvitationSerializer(serializers.ModelSerializer):
     """공개 조회용 시리얼라이저 (민감 정보 제외)"""
 
     template = TemplateListSerializer(read_only=True)
+    transportations = TransportationSerializer(many=True, read_only=True)
 
     class Meta:
         model = Invitation
@@ -130,16 +179,36 @@ class PublicInvitationSerializer(serializers.ModelSerializer):
             "wedding_location_lat",
             "wedding_location_lng",
             "invitation_message",
+            "greeting_title",
+            "greeting_subtitle",
             "greeting_message",
+            "greeting_name_display_type",
+            "greeting_name_manual",
             "ending_message",
+            "photo_urls",
+            "photo_frame_type",
+            "photo_effect",
+            "show_calendar",
+            "show_dday",
+            "show_countdown",
+            "show_map",
+            "lock_map",
+            "show_navigation",
             "background_animation",
             "background_color",
+            "background_texture",
+            "background_effect",
             "font_family",
+            "font_color",
+            "font_weight",
             "music_url",
+            "prevent_zoom",
+            "scroll_animation",
             "enable_rsvp",
             "enable_guestbook",
             "view_count",
             "published_at",
+            "transportations",
         ]
         read_only_fields = ["id", "url_slug", "status", "view_count", "published_at"]
 

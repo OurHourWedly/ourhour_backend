@@ -2,6 +2,8 @@
 프로덕션 환경 설정
 """
 
+from typing import Any, Mapping
+
 from config.settings.base import *
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
@@ -41,7 +43,7 @@ CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if os.ge
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # 로깅 설정 (최적화된 레벨)
-LOGGING = {
+LOGGING: Mapping[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {

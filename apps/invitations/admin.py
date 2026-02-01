@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.invitations.models import Invitation
+from apps.invitations.models import Invitation, Transportation
 
 
 @admin.register(Invitation)
@@ -25,8 +25,56 @@ class InvitationAdmin(admin.ModelAdmin):
                 )
             },
         ),
-        ("메시지", {"fields": ("invitation_message", "greeting_message", "ending_message")}),
-        ("옵션", {"fields": ("background_animation", "background_color", "font_family", "music_url")}),
+        (
+            "메시지",
+            {
+                "fields": (
+                    "invitation_message",
+                    "greeting_title",
+                    "greeting_subtitle",
+                    "greeting_message",
+                    "greeting_name_display_type",
+                    "greeting_name_manual",
+                    "ending_message",
+                )
+            },
+        ),
+        (
+            "사진",
+            {"fields": ("photo_urls", "photo_frame_type", "photo_effect")},
+        ),
+        (
+            "표시 옵션",
+            {"fields": ("show_calendar", "show_dday", "show_countdown")},
+        ),
+        (
+            "지도 옵션",
+            {"fields": ("show_map", "lock_map", "show_navigation")},
+        ),
+        (
+            "테마 설정",
+            {
+                "fields": (
+                    "background_animation",
+                    "background_color",
+                    "background_texture",
+                    "background_effect",
+                    "font_family",
+                    "font_color",
+                    "font_weight",
+                    "music_url",
+                    "prevent_zoom",
+                    "scroll_animation",
+                )
+            },
+        ),
         ("기능 설정", {"fields": ("enable_rsvp", "enable_guestbook", "enable_account_transfer")}),
         ("기타", {"fields": ("is_public", "view_count", "is_paid", "plan_type", "published_at")}),
     )
+
+
+@admin.register(Transportation)
+class TransportationAdmin(admin.ModelAdmin):
+    list_display = ["invitation", "transport_type", "order", "created_at"]
+    list_filter = ["transport_type", "created_at"]
+    search_fields = ["invitation__title", "content"]

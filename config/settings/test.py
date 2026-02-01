@@ -2,6 +2,8 @@
 테스트 환경 설정
 """
 
+from typing import Any, Mapping
+
 from config.settings.base import *
 
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
@@ -22,7 +24,7 @@ PASSWORD_HASHERS = [
 # MIDDLEWARE = [m for m in MIDDLEWARE if 'debug_toolbar' not in m]
 
 # 로깅 비활성화
-LOGGING = {
+LOGGING: Mapping[str, Any] = {
     "version": 1,
     "disable_existing_loggers": True,
 }

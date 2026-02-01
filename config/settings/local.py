@@ -2,6 +2,8 @@
 로컬 개발 환경 설정
 """
 
+from typing import Any, Mapping
+
 from config.settings.base import *
 
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
@@ -38,7 +40,7 @@ MIDDLEWARE += [
 CORS_ALLOW_ALL_ORIGINS = True
 
 # 로깅 설정 (개발 환경 - 상세)
-LOGGING = {
+LOGGING: Mapping[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {

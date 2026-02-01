@@ -3,6 +3,8 @@ Users 앱 서비스 레이어
 비즈니스 로직을 처리하는 레이어
 """
 
+from typing import Optional
+
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -13,7 +15,7 @@ class UserService:
     """User 관련 비즈니스 로직 처리"""
 
     @staticmethod
-    def create_user(email: str, password: str, name: str, phone: str = None):
+    def create_user(email: str, password: str, name: str, phone: Optional[str] = None):
         """
         사용자 생성
 

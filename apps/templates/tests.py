@@ -181,3 +181,67 @@ class TestTemplateRetrieve:
         response = api_client.get("/api/v1/templates/99999/")
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+class TestTemplatePreview:
+    """템플릿 샘플 조회 테스트"""
+
+    def test_preview_template_with_sample(self, api_client, template):
+        """샘플이 있는 템플릿의 샘플 조회 테스트"""
+        from apps.templates.services.template_service import TemplateService
+
+        # 샘플 invitation 생성
+        sample_invitation = TemplateService.create_sample_invitation(template)
+
+        response = api_client.get(f"/api/v1/templates/{template.id}/preview/")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["id"] == sample_invitation.id
+        assert response.data["url_slug"] == sample_invitation.url_slug
+        assert response.data["title"] == f"[샘플] {template.name}"
+        assert response.data["status"] == "PUBLISHED"
+        assert "groom_name" in response.data
+        assert "bride_name" in response.data
+
+    def test_preview_template_without_sample(self, api_client, template):
+        """샘플이 없는 템플릿 조회 시 404 테스트"""
+        # sample_slug가 없는 템플릿
+        template.sample_slug = None
+        template.save()
+
+        response = api_client.get(f"/api/v1/templates/{template.id}/preview/")
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert "error" in response.data
+        assert "샘플이 없습니다" in response.data["error"]
+
+    def test_preview_template_serializer_includes_sample_slug(self, api_client, template):
+        """템플릿 시리얼라이저에 sample_slug 포함 테스트"""
+        from apps.templates.services.template_service import TemplateService
+
+        # 샘플 invitation 생성
+        TemplateService.create_sample_invitation(template)
+
+        # 템플릿 상세 조회
+        response = api_client.get(f"/api/v1/templates/{template.id}/")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "sample_slug" in response.data
+        assert response.data["sample_slug"] == template.sample_slug
+
+    def test_template_list_includes_sample_slug(self, api_client, template):
+        """템플릿 목록에 sample_slug 포함 테스트"""
+        from apps.templates.services.template_service import TemplateService
+
+        # 샘플 invitation 생성
+        TemplateService.create_sample_invitation(template)
+
+        # 템플릿 목록 조회
+        response = api_client.get("/api/v1/templates/")
+
+        assert response.status_code == status.HTTP_200_OK
+        template_data = next((t for t in response.data["results"] if t["id"] == template.id), None)
+        assert template_data is not None
+        assert "sample_slug" in template_data
+        assert template_data["sample_slug"] == template.sample_slug
